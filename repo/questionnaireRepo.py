@@ -19,3 +19,24 @@ class QuestionnaireRepository:
                 .filter_by(user_id=user_id)
                 .join(UserQuestionnaire.questionnaire)
                 .all())
+
+    def get_shared_questionnaires(self):
+        """获取共享的问卷记录"""
+        return self.questionnaire_repo.get_shared_questionnaires()
+
+    def submit_questionnaire(self, user_id: int, questionnaire_id: int, answers: dict, is_shared: bool):
+        """提交问卷"""
+        try:
+            # 创建用户问卷记录
+            user_questionnaire = UserQuestionnaire(
+                user_id=user_id,
+                questionnaire_id=questionnaire_id,
+                assessment=answers,
+                is_shared=is_shared
+            )
+
+            # 保存记录
+            self.questionnaire_repo.create_user_questionnaire(user_questionnaire)
+            return True, "问卷提交成功"
+        except Exception as e:
+            return False, f"提交失败: {str(e)}"
