@@ -40,3 +40,22 @@ class QuestionnaireRepository:
             return True, "问卷提交成功"
         except Exception as e:
             return False, f"提交失败: {str(e)}"
+
+    def delete_questionnaire_record(self, record_id: int, user_id: int):
+        """删除问卷记录"""
+        try:
+            # 获取记录
+            record = self.questionnaire_repo.get_user_questionnaire_by_id(record_id)
+
+            if not record:
+                return False, "记录不存在"
+
+            # 验证所有权
+            if record.user_id != user_id:
+                return False, "无权删除此记录"
+
+            # 删除记录
+            self.questionnaire_repo.delete_user_questionnaire(record)
+            return True, "删除成功"
+        except Exception as e:
+            return False, f"删除失败: {str(e)}"
