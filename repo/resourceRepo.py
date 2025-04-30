@@ -17,3 +17,15 @@ class ResourceRepository:
     def get_major_resources(self, major_id: int):
         """获取专业的所有资源"""
         return self.session.query(MajorResource).filter_by(major_id=major_id).all()
+
+    def get_online_course(self, course_id: int):
+        """获取在线课程"""
+        return self.session.query(OnlineCourse).get(course_id)
+
+    def get_paper(self, paper_id: int):
+        """获取论文"""
+        return self.session.query(Paper).get(paper_id)
+
+    def get_seminar(self, seminar_id: int):
+        """获取研讨会"""
+        return self.session.query(Seminar).get(seminar_id)
