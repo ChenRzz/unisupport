@@ -1,9 +1,10 @@
-from flask import Blueprint, render_template, jsonify, request, flash
+from flask import Blueprint, render_template, jsonify, request, flash, redirect, url_for
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from core.task import TaskService
 from repo.taskRepo import TaskRepository
 from model.db_base import session
 from datetime import datetime
+from flask_jwt_extended import get_jwt_identity
 
 class TaskController:
     bp = Blueprint('task', __name__,
@@ -151,4 +152,14 @@ class TaskController:
         return jsonify({
             'success': True,
             'message': '任务更新成功'
-        }) 
+        })
+
+    @jwt_required(optional=True)
+    def task_page(self):
+        """任务管理页面"""
+        user_id = get_jwt_identity()
+
+        if not user_id:
+            return redirect(url_for('auth.login_page'))
+
+        return render_template('task/index.html')
