@@ -6,6 +6,10 @@ def setup_relationships():
     from model.task import UserTask
     from model.questionnaire import UserQuestionnaire
 
-    # 设置User的关系
-    User.questionnaires = relationship("UserQuestionnaire", back_populates="user", lazy="dynamic")
-    User.tasks = relationship("UserTask", back_populates="user", cascade="all, delete-orphan") 
+    # Set up relationships for User model
+    User.questionnaires = relationship(
+        "UserQuestionnaire", back_populates="user", lazy="dynamic"
+    )
+    User.tasks = relationship(
+        "UserTask", back_populates="user", cascade="all, delete-orphan"
+    )

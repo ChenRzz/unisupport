@@ -5,5 +5,5 @@ from model.questionnaire import Questionnaire, UserQuestionnaire
 from model.resource import Paper, OnlineCourse, Seminar, Major, MajorResource
 from model.relationships import setup_relationships
 
-# 设置关系
-setup_relationships() 
+# Set up relationships
+setup_relationships()
