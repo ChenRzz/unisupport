@@ -6,11 +6,10 @@ from repo.questionnaireRepo import QuestionnaireRepository
 from repo.userRepo import UserRepository
 from model.db_base import session
 
-
 class ResourceController:
     bp = Blueprint('resource', __name__,
-                   template_folder='../templates',
-                   static_folder='../static')
+                  template_folder='../templates',
+                  static_folder='../static')
 
     def __init__(self):
         self.resource_repo = ResourceRepository(session)
@@ -23,13 +22,13 @@ class ResourceController:
         self.bp.add_url_rule('/resources', 'resource_page', self.resource_page, methods=['GET'])
         self.bp.add_url_rule('/api/majors', 'list_majors', self.list_majors, methods=['GET'])
         self.bp.add_url_rule('/api/major/<int:major_id>/resources', 'get_major_resources',
-                             self.get_major_resources, methods=['GET'])
+                            self.get_major_resources, methods=['GET'])
         self.bp.add_url_rule('/api/resources/recommended', 'get_recommended_resources',
-                             self.get_recommended_resources, methods=['GET'])
+                           self.get_recommended_resources, methods=['GET'])
 
     @jwt_required(optional=True)
     def resource_page(self):
-        """资源推荐页面"""
+        """Resource recommendation page"""
         current_user = None
         try:
             user_id = get_jwt_identity()
@@ -43,17 +42,17 @@ class ResourceController:
 
         majors = self.resource_service.get_all_majors()
 
-        # 获取个性化推荐
+        # Get personalized recommendations
         recommendations, error = self.resource_service.get_personalized_recommendations(current_user)
 
         return render_template('resource/index.html',
-                               majors=majors,
-                               user=current_user,
-                               recommendations=recommendations)
+                              majors=majors,
+                              user=current_user,
+                              recommendations=recommendations)
 
     @jwt_required()
     def list_majors(self):
-        """获取所有专业"""
+        """Get all majors"""
         majors = self.resource_service.get_all_majors()
         return jsonify({
             'success': True,
@@ -66,7 +65,7 @@ class ResourceController:
 
     @jwt_required()
     def get_major_resources(self, major_id):
-        """获取专业的所有资源"""
+        """Get all resources for a major"""
         result, error = self.resource_service.get_major_resources(major_id)
         if error:
             return jsonify({
@@ -114,20 +113,20 @@ class ResourceController:
 
     @jwt_required()
     def get_recommended_resources(self):
-        """获取个性化推荐资源的API"""
+        """API to get personalized recommended resources"""
         try:
             user_id = get_jwt_identity()
             if not user_id:
                 return jsonify({
                     'success': False,
-                    'message': '用户未登录'
+                    'message': 'User not logged in'
                 }), 401
 
             user = self.user_repo.get_user_by_id(int(user_id))
             if not user:
                 return jsonify({
                     'success': False,
-                    'message': '用户不存在'
+                    'message': 'User not found'
                 }), 404
 
             recommendations, error = self.resource_service.get_personalized_recommendations(user)
@@ -137,7 +136,6 @@ class ResourceController:
                     'message': error
                 }), 500
 
-            # 返回推荐资源
             return jsonify({
                 'success': True,
                 'data': {
@@ -171,5 +169,5 @@ class ResourceController:
         except Exception as e:
             return jsonify({
                 'success': False,
-                'message': f'获取推荐失败: {str(e)}'
+                'message': f'Failed to get recommendations: {str(e)}'
             }), 500
