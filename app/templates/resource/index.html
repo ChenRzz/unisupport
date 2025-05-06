@@ -1,0 +1,392 @@
+{% extends "base.html" %}
+
+{% block title %}Academic Resource Recommendation - UniSupport{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Academic Resource Recommendation</h2>
+
+    <!-- Personalized Recommendation Section -->
+    <div class="card mb-5" id="recommendationsCard">
+        <div class="card-header bg-primary text-white">
+            <h3 class="mb-0">Recommended for You</h3>
+        </div>
+        <div class="card-body" id="dynamicRecommendations">
+            <div class="text-center p-4">
+                <div class="spinner-border text-primary" role="status"></div>
+                <p class="mt-2">Loading recommendations...</p>
+            </div>
+        </div>
+        <div class="card-footer text-end">
+            <button class="btn btn-outline-primary" onclick="refreshRecommendations()">
+                <i class="bi bi-arrow-clockwise"></i> Refresh Recommendations
+            </button>
+        </div>
+    </div>
+
+    <!-- Major selection and resources -->
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Select Major</h5>
+                    <select class="form-select" id="majorSelect">
+                        <option value="">Please select a major...</option>
+                        {% for major in majors %}
+                        <option value="{{ major.id }}">{{ major.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div id="resourcesContainer" style="display: none;">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h4 id="majorName"></h4>
+                        <p id="majorDescription" class="text-muted"></p>
+                    </div>
+                </div>
+
+                <!-- Online Courses -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Online Courses</h5>
+                    </div>
+                    <div class="card-body" id="onlineCoursesList"></div>
+                </div>
+
+                <!-- Papers -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Relevant Papers</h5>
+                    </div>
+                    <div class="card-body" id="papersList"></div>
+                </div>
+
+                <!-- Seminars -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0">Seminars</h5>
+                    </div>
+                    <div class="card-body" id="seminarsList"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Paper Details Modal -->
+    <div class="modal fade" id="paperDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="paperTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p><strong>Authors:</strong> <span id="paperAuthors"></span></p>
+                    <p><strong>Published In:</strong> <span id="paperPublication"></span></p>
+                    <div class="card mt-3">
+                        <div class="card-header">Abstract</div>
+                        <div class="card-body">
+                            <p id="paperAbstract"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Seminar Details Modal -->
+    <div class="modal fade" id="seminarDetailsModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="seminarTitle"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-header">Description</div>
+                        <div class="card-body">
+                            <p id="seminarDescription"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Load resources for a major when selected
+document.getElementById('majorSelect').addEventListener('change', async function() {
+    const majorId = this.value;
+    
+    if (!majorId) {
+        document.getElementById('resourcesContainer').style.display = 'none';
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/major/${majorId}/resources`);
+        const data = await response.json();
+        
+        if (data.success) {
+            // Display major information
+            document.getElementById('majorName').textContent = data.data.major.name;
+            document.getElementById('majorDescription').textContent = data.data.major.description;
+            
+            // Render courses
+            renderOnlineCourses(data.data.resources.online_courses);
+            renderPapers(data.data.resources.papers);
+            renderSeminars(data.data.resources.seminars);
+            
+            document.getElementById('resourcesContainer').style.display = 'block';
+        } else {
+            alert(data.message || 'Failed to load resources');
+        }
+    } catch (error) {
+        console.error('Error loading resources:', error);
+        alert('Error loading resources. Please try again.');
+    }
+});
+
+// Render online courses
+function renderOnlineCourses(courses) {
+    const container = document.getElementById('onlineCoursesList');
+    
+    if (courses.length === 0) {
+        container.innerHTML = '<p class="text-muted">No courses available for this major.</p>';
+        return;
+    }
+    
+    let html = '<div class="list-group">';
+    courses.forEach(course => {
+        html += `
+            <div class="list-group-item">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">${course.name}</h5>
+                    <small>${course.duration}</small>
+                </div>
+                <p class="mb-1">${course.description}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small>Instructor: ${course.instructor}</small>
+                    <a href="${course.url}" target="_blank" class="btn btn-sm btn-outline-primary">Visit Course</a>
+                </div>
+            </div>
+        `;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+// Render papers
+function renderPapers(papers) {
+    const container = document.getElementById('papersList');
+    
+    if (papers.length === 0) {
+        container.innerHTML = '<p class="text-muted">No papers available for this major.</p>';
+        return;
+    }
+    
+    let html = '<div class="list-group">';
+    papers.forEach(paper => {
+        html += `
+            <div class="list-group-item">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">${paper.title}</h5>
+                    <small>${paper.publish_date ? new Date(paper.publish_date).toLocaleDateString() : 'N/A'}</small>
+                </div>
+                <p class="mb-1">${paper.authors}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small>${paper.publication}</small>
+                    <button class="btn btn-sm btn-outline-secondary" 
+                            onclick="showPaperDetails('${paper.title}', '${paper.authors}', '${paper.publication}', '${paper.abstract.replace(/'/g, "\\'")}')">
+                        View Abstract
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+// Render seminars
+function renderSeminars(seminars) {
+    const container = document.getElementById('seminarsList');
+    
+    if (seminars.length === 0) {
+        container.innerHTML = '<p class="text-muted">No seminars available for this major.</p>';
+        return;
+    }
+    
+    let html = '<div class="list-group">';
+    seminars.forEach(seminar => {
+        html += `
+            <div class="list-group-item">
+                <div class="d-flex w-100 justify-content-between">
+                    <h5 class="mb-1">${seminar.title}</h5>
+                    <small>${seminar.date ? new Date(seminar.date).toLocaleDateString() : 'N/A'}</small>
+                </div>
+                <p class="mb-1">Organizer: ${seminar.organizer}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <small>Location: ${seminar.location}</small>
+                    <button class="btn btn-sm btn-outline-secondary"
+                            onclick="showSeminarDetails('${seminar.title}', '${seminar.description.replace(/'/g, "\\'")}')">
+                        View Details
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+// Load personalized recommendations
+async function loadRecommendations() {
+    try {
+        const response = await fetch('/api/resources/recommended');
+        const data = await response.json();
+        
+        if (data.success) {
+            const recommendationsContainer = document.getElementById('dynamicRecommendations');
+            
+            // Count total recommendations
+            const totalRecommendations = data.data.online_courses.length + 
+                                        data.data.papers.length + 
+                                        data.data.seminars.length;
+            
+            if (totalRecommendations === 0) {
+                recommendationsContainer.innerHTML = `
+                    <div class="alert alert-info">
+                        No personalized recommendations available yet. Please complete a questionnaire or browse resources by major.
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            
+            // Add online courses
+            if (data.data.online_courses.length > 0) {
+                html += '<h4>Recommended Courses</h4>';
+                html += '<div class="row">';
+                data.data.online_courses.forEach(course => {
+                    html += `
+                        <div class="col-md-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5 class="card-title">${course.name}</h5>
+                                    <p class="card-text">${course.description.substring(0, 100)}...</p>
+                                </div>
+                                <div class="card-footer">
+                                    <a href="${course.url}" target="_blank" class="btn btn-sm btn-primary">Visit Course</a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            // Add papers
+            if (data.data.papers.length > 0) {
+                html += '<h4 class="mt-4">Recommended Papers</h4>';
+                html += '<div class="list-group mb-3">';
+                data.data.papers.forEach(paper => {
+                    html += `
+                        <a href="#" class="list-group-item list-group-item-action" 
+                           onclick="showPaperDetails('${paper.title}', '${paper.authors}', '${paper.publication}', '${paper.abstract.replace(/'/g, "\\'")}'); return false;">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">${paper.title}</h5>
+                                <small>${paper.publish_date ? new Date(paper.publish_date).toLocaleDateString() : 'N/A'}</small>
+                            </div>
+                            <p class="mb-1">${paper.authors}</p>
+                            <small>${paper.publication}</small>
+                        </a>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            // Add seminars
+            if (data.data.seminars.length > 0) {
+                html += '<h4 class="mt-4">Recommended Seminars</h4>';
+                html += '<div class="list-group">';
+                data.data.seminars.forEach(seminar => {
+                    html += `
+                        <a href="#" class="list-group-item list-group-item-action"
+                           onclick="showSeminarDetails('${seminar.title}', '${seminar.description.replace(/'/g, "\\'")}'); return false;">
+                            <div class="d-flex w-100 justify-content-between">
+                                <h5 class="mb-1">${seminar.title}</h5>
+                                <small>${seminar.date ? new Date(seminar.date).toLocaleDateString() : 'N/A'}</small>
+                            </div>
+                            <p class="mb-1">Organizer: ${seminar.organizer}</p>
+                            <small>Location: ${seminar.location}</small>
+                        </a>
+                    `;
+                });
+                html += '</div>';
+            }
+            
+            recommendationsContainer.innerHTML = html;
+        } else {
+            document.getElementById('dynamicRecommendations').innerHTML = `
+                <div class="alert alert-warning">
+                    Failed to load recommendations: ${data.message || 'Unknown error'}
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Error loading recommendations:', error);
+        document.getElementById('dynamicRecommendations').innerHTML = `
+            <div class="alert alert-danger">
+                Error loading recommendations. Please try again later.
+            </div>
+        `;
+    }
+}
+
+// Show paper details in modal
+function showPaperDetails(title, authors, publication, abstract) {
+    document.getElementById('paperTitle').textContent = title;
+    document.getElementById('paperAuthors').textContent = authors;
+    document.getElementById('paperPublication').textContent = publication;
+    document.getElementById('paperAbstract').textContent = abstract;
+    
+    const modal = new bootstrap.Modal(document.getElementById('paperDetailsModal'));
+    modal.show();
+}
+
+// Show seminar details in modal
+function showSeminarDetails(title, description) {
+    document.getElementById('seminarTitle').textContent = title;
+    document.getElementById('seminarDescription').textContent = description;
+    
+    const modal = new bootstrap.Modal(document.getElementById('seminarDetailsModal'));
+    modal.show();
+}
+
+// Refresh recommendations
+function refreshRecommendations() {
+    document.getElementById('dynamicRecommendations').innerHTML = `
+        <div class="text-center p-4">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2">Loading recommendations...</p>
+        </div>
+    `;
+    loadRecommendations();
+}
+
+// Load recommendations when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    loadRecommendations();
+});
+</script>
+{% endblock %}

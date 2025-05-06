@@ -1,0 +1,499 @@
+{% extends "base.html" %}
+
+{% block title %}Task Management - UniSupport{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Task Management</h2>
+        </div>
+        <div class="col-auto">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newTaskModal">
+                Add Task
+            </button>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- To-Do Tasks -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-warning text-white">
+                    To-Do
+                </div>
+                <div class="card-body" id="todoTasks">
+                    <!-- Task list will be dynamically loaded via JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Completed Tasks -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-success text-white">
+                    Completed
+                </div>
+                <div class="card-body" id="completedTasks">
+                    <!-- Task list will be dynamically loaded via JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- New Task Modal -->
+<div class="modal fade" id="newTaskModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">New Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="newTaskForm">
+                    <div class="mb-3">
+                        <label class="form-label">Title</label>
+                        <input type="text" class="form-control" name="title" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Due Date</label>
+                        <input type="datetime-local" class="form-control" name="due_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Priority</label>
+                        <select class="form-select" name="priority" required>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="createTask()">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Task Notes Modal -->
+<div class="modal fade" id="taskNotesModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Task Notes</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="taskNotesForm">
+                    <input type="hidden" name="user_task_id">
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-control" name="notes" rows="5"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="updateNotes()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Task Modal -->
+<div class="modal fade" id="editTaskModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editTaskForm">
+                    <input type="hidden" name="user_task_id">
+                    <div class="mb-3">
+                        <label class="form-label">Title</label>
+                        <input type="text" class="form-control" name="title" required minlength="2" maxlength="50">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-control" name="description" rows="3" maxlength="500"></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Due Date</label>
+                        <input type="datetime-local" class="form-control" name="due_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Priority</label>
+                        <select class="form-select" name="priority" required>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Notes</label>
+                        <textarea class="form-control" name="notes" rows="3" maxlength="500"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="updateTask()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Task card template
+function getTaskCard(task) {
+    const priorityColors = {
+        'high': 'bg-danger',
+        'medium': 'bg-warning',
+        'low': 'bg-info'
+    };
+
+    // Adjust timezone display
+    const dueDate = new Date(task.due_date);
+    dueDate.setHours(dueDate.getHours() - 1); // UK time is UTC+1
+
+    const isCompleted = task.status === 'completed';
+
+    return `
+        <div class="card mb-2 task-card ${task.is_system_task ? 'border-primary' : ''}" data-id="${task.user_task_id}">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-start">
+                    <h5 class="card-title ${isCompleted ? 'text-decoration-line-through' : ''}">${task.title}</h5>
+                    <span class="badge ${priorityColors[task.priority]}">
+                        ${task.priority}
+                    </span>
+                </div>
+                <p class="card-text">${task.description}</p>
+                ${task.course_name ? `<p class="card-text"><small>Course: ${task.course_name}</small></p>` : ''}
+                <p class="card-text">
+                    <small class="text-muted">Due: ${dueDate.toLocaleString()}</small>
+                </p>
+                ${task.notes ? `<p class="card-text"><small>Notes: ${task.notes}</small></p>` : ''}
+                <div class="btn-group">
+                    ${!task.is_system_task ? `
+                        <button class="btn btn-sm btn-outline-primary" onclick="showEditModal(${JSON.stringify(task).replace(/"/g, '&quot;')})">
+                            Edit
+                        </button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="deleteTask(${task.user_task_id})">
+                            Delete
+                        </button>
+                        <button class="btn btn-sm btn-outline-success" onclick="toggleTaskStatus(${task.user_task_id}, '${isCompleted ? 'todo' : 'completed'}')">
+                            ${isCompleted ? 'Undo' : 'Complete'}
+                        </button>
+                    ` : `
+                        <button class="btn btn-sm btn-outline-secondary" onclick="showNotesModal(${task.user_task_id}, '${task.notes || ''}')">
+                            Edit Notes
+                        </button>
+                    `}
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+
+// Load task list
+function loadTasks() {
+    fetch('/api/tasks')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('todoTasks').innerHTML =
+                    data.data.todo.map(task => getTaskCard(task)).join('');
+                document.getElementById('completedTasks').innerHTML =
+                    data.data.completed.map(task => getTaskCard(task)).join('');
+            }
+        });
+}
+
+// Create a new task
+function createTask() {
+    const form = document.getElementById('newTaskForm');
+
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+
+    const dueDate = new Date(data.due_date);
+    const now = new Date();
+    now.setSeconds(0, 0);
+    dueDate.setSeconds(0, 0);
+    if (dueDate < now) {
+        alert('Due date cannot be earlier than the current time.');
+        return;
+    }
+
+    if (data.title.length < 2 || data.title.length > 50) {
+        alert('Title must be between 2 and 50 characters.');
+        return;
+    }
+
+    if (data.description && data.description.length > 500) {
+        alert('Description cannot exceed 500 characters.');
+        return;
+    }
+
+    fetch('/api/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            loadTasks();
+            if (typeof updateTaskBadge === 'function') {
+                updateTaskBadge();
+            }
+            const modal = bootstrap.Modal.getInstance(document.getElementById('newTaskModal'));
+            modal.hide();
+            form.reset();
+            window.location.reload();
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        alert('Failed to create task. Please try again later.');
+        console.error('Error:', error);
+    });
+}
+
+// Delete task
+function deleteTask(userTaskId) {
+    if (!confirm('Are you sure you want to delete this task?')) {
+        return;
+    }
+
+    fetch(`/api/tasks/${userTaskId}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            loadTasks();
+            window.location.reload();
+            if (typeof updateTaskBadge === 'function') {
+                updateTaskBadge();
+            }
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        alert('Failed to delete task. Please try again later.');
+        console.error('Error:', error);
+    });
+}
+
+
+// Update task status
+function updateTaskStatus(userTaskId, status) {
+    fetch(`/api/tasks/${userTaskId}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            loadTasks();
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        alert('Failed to update status. Please try again later.');
+        console.error('Error:', error);
+    });
+}
+
+// Show task notes modal
+function showNotesModal(userTaskId, notes) {
+    const form = document.getElementById('taskNotesForm');
+    form.elements['user_task_id'].value = userTaskId;
+    form.elements['notes'].value = notes;
+
+    const modalElement = document.getElementById('taskNotesModal');
+    const modal = new bootstrap.Modal(modalElement);
+    modal.show();
+}
+
+// Update task notes
+function updateNotes() {
+    const form = document.getElementById('taskNotesForm');
+    const userTaskId = form.elements['user_task_id'].value;
+    const notes = form.elements['notes'].value;
+
+    if (notes.length > 500) {
+        alert('Notes cannot exceed 500 characters.');
+        return;
+    }
+
+    fetch(`/api/tasks/${userTaskId}/notes`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notes })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('taskNotesModal'));
+            modal.hide();
+            loadTasks();
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        alert('Failed to update notes. Please try again later.');
+        console.error('Error:', error);
+    });
+}
+
+
+// Show edit task modal
+function showEditModal(task) {
+    const form = document.getElementById('editTaskForm');
+    form.elements['user_task_id'].value = task.user_task_id;
+    form.elements['title'].value = task.title;
+    form.elements['description'].value = task.description || '';
+
+    const dueDate = new Date(task.due_date);
+    form.elements['due_date'].value = dueDate.toISOString().slice(0, 16);
+
+    form.elements['priority'].value = task.priority;
+    form.elements['notes'].value = task.notes || '';
+
+    const modal = new bootstrap.Modal(document.getElementById('editTaskModal'));
+    modal.show();
+}
+
+// Update task
+function updateTask() {
+    const form = document.getElementById('editTaskForm');
+
+    if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+    }
+
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    const userTaskId = data.user_task_id;
+    delete data.user_task_id;
+
+    const dueDate = new Date(data.due_date);
+    const now = new Date();
+    now.setSeconds(0, 0);
+    dueDate.setSeconds(0, 0);
+    if (dueDate < now) {
+        alert('Due date cannot be earlier than the current time.');
+        return;
+    }
+
+    if (data.title.length < 2 || data.title.length > 50) {
+        alert('Title must be between 2 and 50 characters.');
+        return;
+    }
+
+    if (data.description && data.description.length > 500) {
+        alert('Description cannot exceed 500 characters.');
+        return;
+    }
+
+    if (data.notes && data.notes.length > 500) {
+        alert('Notes cannot exceed 500 characters.');
+        return;
+    }
+
+    fetch(`/api/tasks/${userTaskId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const modal = bootstrap.Modal.getInstance(document.getElementById('editTaskModal'));
+            modal.hide();
+            loadTasks();
+            window.location.reload();
+            if (typeof updateTaskBadge === 'function') {
+                updateTaskBadge();
+            }
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        alert('Failed to update task. Please try again later.');
+        console.error('Error:', error);
+    });
+}
+
+
+// Toggle task completion status
+function toggleTaskStatus(userTaskId, status) {
+    fetch(`/api/tasks/${userTaskId}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            loadTasks();
+            if (typeof updateTaskBadge === 'function') {
+                updateTaskBadge();
+            }
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        alert('Failed to update status. Please try again later.');
+        console.error('Error:', error);
+    });
+}
+
+// Execute when the page is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    loadTasks();
+});
+
+</script>
+
+<style>
+.task-card {
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.task-card:hover {
+    transform: translateY(-2px);
+}
+.card-body {
+    min-height: 200px;
+}
+</style>
+{% endblock %} 

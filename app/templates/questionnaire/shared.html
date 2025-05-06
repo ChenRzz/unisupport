@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Shared Questionnaires - UniSupport{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Questionnaire Results Shared by Students</h2>
+
+    {% if questionnaires %}
+        {% for q in questionnaires %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <h5 class="card-title">
+                    {% if q.questionnaire.type == 'psychological_assessment' %}
+                        Psychological Assessment Questionnaire
+                    {% elif q.questionnaire.type == 'beck_depression_inventory' %}
+                        Beck Depression Inventory (BDI-II)
+                    {% elif q.questionnaire.type == 'study_status_assessment' %}
+                        Study Status Assessment Questionnaire
+                    {% else %}
+                        {{ q.questionnaire.type }}
+                    {% endif %}
+                </h5>
+                <p class="card-text">Student: {{ q.user.username }}</p>
+                <p class="card-text">Submitted at: {{ q.created_date.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick='showAnswers({{ q.assessment|tojson }}, {{ q.questionnaire.content|tojson }})'>View Answers</button>
+                    <button class="btn btn-success" onclick='showResults({{ q.assessment|tojson }}, "{{ q.questionnaire.type }}")'>View Suggestions</button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info">
+            No shared questionnaire results available.
+        </div>
+    {% endif %}
+</div>
+
+<!-- Answer Modal -->
+<div class="modal fade" id="answersModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Questionnaire Answers</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="answersContent">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Result Suggestion Modal -->
+<div class="modal fade" id="resultsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resultsTitle">Questionnaire Results and Suggestions</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="resultsContent">
+                <div class="text-center">
+                    <div class="spinner-border" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mt-2">Calculating results, please wait...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function showAnswers(answers, questionnaireContent) {
+    const modal = new bootstrap.Modal(document.getElementById('answersModal'));
+    const content = document.getElementById('answersContent');
+    content.innerHTML = formatAnswers(answers, questionnaireContent);
+    modal.show();
+}
+
+function formatAnswers(answers, questionnaire) {
+    let html = '<div class="list-group">';
+    for (const [questionId, answer] of Object.entries(answers)) {
+        const question = questionnaire.questions.find(q => q.id.toString() === questionId);
+        if (!question) continue;
+
+        html += `<div class="list-group-item">`;
+        html += `<h6 class="mb-2">${question.question}</h6>`;
+
+        if (question.type === 'single_choice' || question.type === 'multiple_choice') {
+            const selectedValues = Array.isArray(answer) ? answer : [answer];
+            const selectedOptions = question.options
+                .filter(opt => selectedValues.includes(opt.value.toString()))
+                .map(opt => opt.text)
+                .join(', ');
+            html += `<p class="mb-0">Selected: ${selectedOptions}</p>`;
+        } else {
+            html += `<p class="mb-0">Answer: ${answer}</p>`;
+        }
+
+        html += '</div>';
+    }
+    html += '</div>';
+    return html;
+}
+
+async function showResults(answers, questionnaireType) {
+    const modal = new bootstrap.Modal(document.getElementById('resultsModal'));
+    modal.show();
+
+    try {
+        const processedAnswers = {};
+        for (const [questionId, answer] of Object.entries(answers)) {
+            if (!isNaN(answer) && answer !== '') {
+                processedAnswers[questionId] = parseInt(answer);
+            } else {
+                processedAnswers[questionId] = answer;
+            }
+        }
+
+        const response = await fetch('/api/questionnaire/calculate-result', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                questionnaire_type: questionnaireType,
+                answers: processedAnswers
+            })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            document.getElementById('resultsTitle').textContent = data.result.title;
+            const content = document.getElementById('resultsContent');
+            content.innerHTML = `
+                <div class="result-content mb-4">
+                    ${data.result.content}
+                </div>
+
+                <div class="score-summary mt-4 p-3 bg-light rounded">
+                    <h4>Summary</h4>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <strong>Total Score:</strong> ${data.result.score}
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <strong>Level:</strong> ${data.result.description}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        } else {
+            document.getElementById('resultsContent').innerHTML = `
+                <div class="alert alert-danger">
+                    <p>Failed to retrieve result: ${data.message}</p>
+                </div>
+            `;
+        }
+    } catch (error) {
+        console.error('Failed to retrieve result:', error);
+        document.getElementById('resultsContent').innerHTML = `
+            <div class="alert alert-danger">
+                <p>Failed to retrieve result. Please try again.</p>
+            </div>
+        `;
+    }
+}
+</script>
+{% endblock %}

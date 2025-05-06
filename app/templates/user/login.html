@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Login - UniSupport{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">User Login</h4>
+            </div>
+            <div class="card-body">
+                <form id="loginForm" onsubmit="handleLogin(event)">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">Username or Email</label>
+                        <input type="text" class="form-control" id="username" name="username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+async function handleLogin(event) {
+    event.preventDefault();
+    
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    
+    try {
+        const response = await fetch('/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            // No need to manually store token as it's already in the cookie
+            // localStorage.setItem('token', data.data.token);
+            // Directly redirect to profile page
+            window.location.href = '/profile';
+        } else {
+            alert(data.message || 'Login failed');
+        }
+    } catch (error) {
+        alert('Login failed, please try again later');
+        console.error('Error:', error);
+    }
+}
+</script>
+{% endblock %} 

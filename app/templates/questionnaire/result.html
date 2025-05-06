@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}{{ result.title }} - UniSupport{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="card mb-5">
+        <div class="card-header bg-primary text-white">
+            <h2 class="h3 mb-0">{{ result.title }}</h2>
+        </div>
+        <div class="card-body">
+            <div class="result-content mb-4">
+                {{ result.content|safe }}
+            </div>
+
+            <div class="score-summary mt-4 p-3 bg-light rounded">
+                <h4>Summary</h4>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="mb-3">
+                            <strong>Total Score:</strong> {{ result.score }}
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="mb-3">
+                            <strong>Level:</strong> {{ result.description }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="d-flex justify-content-between">
+                <a href="{{ url_for('questionnaire.list_page') }}" class="btn btn-secondary">Back to Questionnaire List</a>
+                <a href="{{ url_for('questionnaire.history_page') }}" class="btn btn-primary">View My History</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

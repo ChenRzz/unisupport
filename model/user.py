@@ -10,19 +10,20 @@ class User(Base):
     username = Column(String(50), nullable=False, unique=True)
     email = Column(String(100), nullable=False, unique=True)
     password_hash = Column(String(128), nullable=False)
-    is_stuff = Column(Boolean, default=False)
+    is_stuff = Column(Boolean, default=False)  # True if the user is staff/admin
     created_at = Column(DateTime, default=datetime.datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.datetime.utcnow, onupdate=datetime.datetime.utcnow)
 
-    # 关系定义 - 使用字符串引用
+    # Relationships - use string references
     questionnaires = relationship("UserQuestionnaire", back_populates="user", lazy="dynamic")
-    # 暂时注释掉这两行，等到实现校内课程功能时再启用
+
+    # These will be enabled when internal course features are implemented
     # enrolled_courses = relationship("CourseUser", back_populates="user", lazy="dynamic")
     # assignments = relationship("UserAssignment", back_populates="user", lazy="dynamic")
 
-    # 添加任务关联 - 使用字符串引用
+    # Task relationship - use string references
     tasks = relationship("UserTask", back_populates="user", cascade="all, delete-orphan")
 
-    # 添加专业字段
+    # Add major relationship field
     major_id = Column(Integer, ForeignKey('majors.id'), nullable=True)
     major = relationship("Major", backref="users")

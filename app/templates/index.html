@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 
-{% block title %}首页 - UniSupport{% endblock %}
+{% block title %}Home - UniSupport{% endblock %}
 
 {% block content %}
 <div class="container">
     <div class="px-4 py-5 my-5 text-center">
-        <h1 class="display-5 fw-bold">欢迎来到 UniSupport</h1>
+        <h1 class="display-5 fw-bold">Welcome to UniSupport</h1>
         <div class="col-lg-6 mx-auto">
             <p class="lead mb-4">
-                UniSupport 是一个为大学生提供全方位支持的平台，包括心理健康评估、学术资源推荐和任务管理等功能。
+                UniSupport is a platform providing comprehensive support for university students, including mental health assessment, academic resource recommendations, and task management.
             </p>
         </div>
     </div>
@@ -17,9 +17,9 @@
         <div class="col-md-4">
             <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title">心理问卷评估</h5>
-                    <p class="card-text">提供专业的心理健康评估问卷，帮助您了解自己的心理状态。</p>
-                    <a href="{{ url_for('questionnaire.list_page') }}" class="btn btn-primary">开始评估</a>
+                    <h5 class="card-title">Mental Health Assessment</h5>
+                    <p class="card-text">Provides professional mental health assessment questionnaires to help you understand your psychological state.</p>
+                    <a href="{{ url_for('questionnaire.list_page') }}" class="btn btn-primary">Start Assessment</a>
                 </div>
             </div>
         </div>
@@ -27,9 +27,9 @@
         <div class="col-md-4">
             <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title">学术资源推荐</h5>
-                    <p class="card-text">根据专业为您推荐优质的在线课程、学术论文和研讨会资源。</p>
-                    <a href="{{ url_for('resource.resource_page') }}" class="btn btn-primary">浏览资源</a>
+                    <h5 class="card-title">Academic Resources</h5>
+                    <p class="card-text">Recommends quality online courses, academic papers, and seminar resources based on your major.</p>
+                    <a href="{{ url_for('resource.resource_page') }}" class="btn btn-primary">Browse Resources</a>
                 </div>
             </div>
         </div>
@@ -37,9 +37,9 @@
         <div class="col-md-4">
             <div class="card h-100">
                 <div class="card-body">
-                    <h5 class="card-title">任务管理</h5>
-                    <p class="card-text">帮助您管理课程作业和学习任务，提高学习效率。</p>
-                    <a href="{{ url_for('task.task_page') }}" class="btn btn-primary">管理任务</a>
+                    <h5 class="card-title">Task Management</h5>
+                    <p class="card-text">Helps you manage course assignments and study tasks to improve learning efficiency.</p>
+                    <a href="{{ url_for('task.task_page') }}" class="btn btn-primary">Manage Tasks</a>
                 </div>
             </div>
         </div>

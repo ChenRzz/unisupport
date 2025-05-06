@@ -14,36 +14,35 @@ from data.resource_data import (
 from data.task_data import get_system_tasks, get_initial_user_tasks
 from model.task import Task, UserTask
 
-
 def init_db():
-    print("正在删除所有表...")
+    print("Dropping all tables...")
     Base.metadata.drop_all(engine)
 
-    print("正在创建所有表...")
+    print("Creating all tables...")
     Base.metadata.create_all(engine)
 
-    # 确保关系已设置
+    # Ensure relationships are configured
     setup_relationships()
 
     db_session = session
     current_time = datetime.datetime.now(datetime.UTC)
 
     try:
-        # 先创建专业
-        print("创建专业...")
+        # Create majors
+        print("Creating majors...")
         majors = {}
         for major_data in get_majors(current_time):
             major = Major(**major_data)
             db_session.add(major)
             majors[major_data["name"]] = major
 
-        # 提交以获取专业ID
+        # Flush to get major IDs
         db_session.flush()
 
-        # 创建用户并关联专业
-        print("创建用户...")
+        # Create users and associate with majors
+        print("Creating users...")
         for user_data in get_users(current_time):
-            major_name = user_data.pop("major_name", None)  # 移除专业名称字段
+            major_name = user_data.pop("major_name", None)  # Remove major field
             user = User(
                 username=user_data["username"],
                 email=user_data["email"],
@@ -53,39 +52,38 @@ def init_db():
                 updated_at=user_data["updated_at"]
             )
 
-            # 如果指定了专业，设置关联
             if major_name and major_name in majors:
                 user.major_id = majors[major_name].id
 
             db_session.add(user)
 
-        # 创建问卷
-        print("创建问卷...")
+        # Create questionnaires
+        print("Creating questionnaires...")
         for q_data in get_questionnaire_data(current_time):
             questionnaire = Questionnaire(**q_data)
             db_session.add(questionnaire)
 
-        # 创建资源
-        print("创建在线课程...")
+        # Create resources
+        print("Creating online courses...")
         courses = [OnlineCourse(**course_data)
                    for course_data in get_online_courses(current_time)]
         db_session.add_all(courses)
 
-        print("创建论文...")
+        print("Creating papers...")
         papers = [Paper(**paper_data)
                   for paper_data in get_papers(current_time)]
         db_session.add_all(papers)
 
-        print("创建研讨会...")
+        print("Creating seminars...")
         seminars = [Seminar(**seminar_data)
                     for seminar_data in get_seminars(current_time)]
         db_session.add_all(seminars)
 
-        # 提交以获取ID
+        # Flush to get resource IDs
         db_session.flush()
 
-        # 创建专业资源关联
-        print("创建专业资源关联...")
+        # Create major-resource mappings
+        print("Creating major-resource mappings...")
         mappings = get_major_resource_mappings()
         for major_name, resources in mappings.items():
             major = majors[major_name]
@@ -117,8 +115,8 @@ def init_db():
                     updated_at=current_time
                 ))
 
-        # 创建系统任务
-        print("创建系统任务...")
+        # Create system tasks
+        print("Creating system tasks...")
         system_tasks = []
         for task_data in get_system_tasks(current_time):
             task = Task(
@@ -136,11 +134,11 @@ def init_db():
             db_session.add(task)
             system_tasks.append(task)
 
-        # 提交以获取任务ID
+        # Flush to get task IDs
         db_session.flush()
 
-        # 为用户分配系统任务
-        print("分配系统任务给用户...")
+        # Assign system tasks to users
+        print("Assigning system tasks to users...")
         user_tasks_data = get_initial_user_tasks()
         for username, data in user_tasks_data.items():
             user = db_session.query(User).filter_by(username=username).first()
@@ -154,22 +152,21 @@ def init_db():
                     )
                     db_session.add(user_task)
 
-        # 提交所有更改
+        # Commit all changes
         db_session.commit()
 
-        print("\n数据库初始化完成！")
-        print("\n可用账号:")
+        print("\nDatabase initialization complete!")
+        print("\nAvailable accounts:")
         for user_data in get_users(current_time):
-            print(f"\n{'管理员' if user_data['is_stuff'] else '学生'}账号:")
-            print(f"   用户名: {user_data['username']}")
-            print(f"   邮箱: {user_data['email']}")
-            print(f"   密码: {user_data['password']}")
+            print(f"\n{'Admin' if user_data['is_stuff'] else 'Student'} Account:")
+            print(f"   Username: {user_data['username']}")
+            print(f"   Email: {user_data['email']}")
+            print(f"   Password: {user_data['password']}")
 
     except Exception as e:
-        print(f"初始化数据库时出错: {str(e)}")
+        print(f"Error during database initialization: {str(e)}")
         db_session.rollback()
         raise
-
 
 if __name__ == '__main__':
     init_db()

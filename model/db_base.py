@@ -3,20 +3,21 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 import os
 
-# Base Class
+# Base class for declarative models
 Base = declarative_base()
 
-# base directory
+# Base directory of the project
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# path of db
+
+# Path to the SQLite database file
 DB_PATH = os.path.join(BASE_DIR, 'UniSupport.db')
 
-# create db engine
+# Create the database engine
 engine = create_engine(f'sqlite:///{DB_PATH}', echo=True)
 
-# connection pool
+# Create a session factory and initialize a session
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# test the path of db
-print(f"数据库文件路径: {DB_PATH}")
+# Print the path of the database file for debugging
+print(f"Database file path: {DB_PATH}")
