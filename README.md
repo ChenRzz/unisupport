@@ -70,7 +70,7 @@ pip install -r requirements.txt
 
 4. Initialize the database
 ```bash
-python model/init_db.py
+python -m model.init_db
 ```
 
 5. Run the application
