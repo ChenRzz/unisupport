@@ -141,3 +141,13 @@ Run all unit tests:
 ```bash
 python tests/run_tests.py
 ```
+
+## Contribution Percentage
+
+| Student Name & ID   | Contribution (%) | Key Contributions / Tasks Completed | Comments (if any)                            | Signature |
+|---------------------|------------------|-------------------------------------|----------------------------------------------|-----------|
+|Yaqing Zhao – 2761889| 20               |                                     |                                              |           |
+|Shiwei Yang – 2753232| 20               |                                     |                                              |           |
+|Bingrui Yang – 2593042| 20               |                                     |                                              |           |
+|Renze Chen – 2854479| 20               |                                     |                                              |           |
+|Shouyang Wang – 2777472| 20               |                                     |                                              |           |
