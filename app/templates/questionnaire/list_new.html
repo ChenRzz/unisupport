@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Mental Health Assessment Questionnaires - UniSupport{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Mental Health Assessment Questionnaires</h2>
+
+    <div class="row">
+        {% for questionnaire in questionnaires %}
+            <div class="col-md-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            {% if questionnaire.type == 'beck_depression_inventory' %}
+                                Beck Depression Inventory (BDI-II)
+                            {% elif questionnaire.type == 'study_status_assessment' %}
+                                Study Status Assessment Questionnaire
+                            {% else %}
+                                {{ questionnaire.title }}
+                            {% endif %}
+                        </h5>
+                        <p class="card-text">{{ questionnaire.description }}</p>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <a href="{{ url_for('questionnaire.take_questionnaire', questionnaire_type=questionnaire.type) }}"
+                           class="btn btn-primary">Start Assessment</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="mt-5">
+        <div class="alert alert-info">
+            <h4 class="alert-heading">Important Note</h4>
+            <p>These questionnaires are for self-assessment only and do not constitute a medical diagnosis. Please consult a healthcare or mental health professional if needed.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Removed old questionnaire loading logic
+</script>
+{% endblock %}

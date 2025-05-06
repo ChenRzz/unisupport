@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if questionnaire.type == 'beck_depression_inventory' %}
+        Beck Depression Inventory (BDI-II)
+    {% elif questionnaire.type == 'study_status_assessment' %}
+        Study Status Assessment Questionnaire
+    {% else %}
+        Questionnaire Form
+    {% endif %}
+    - UniSupport
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-3">
+        {% if questionnaire.type == 'beck_depression_inventory' %}
+            Beck Depression Inventory (BDI-II)
+        {% elif questionnaire.type == 'study_status_assessment' %}
+            Study Status Assessment Questionnaire
+        {% else %}
+            {{ questionnaire.type }}
+        {% endif %}
+    </h2>
+
+    <div class="alert alert-secondary mb-4">
+        <p class="mb-0">{{ questionnaire.description }}</p>
+    </div>
+
+    <form method="post" action="{{ url_for('questionnaire.submit_new_questionnaire', questionnaire_type=questionnaire.type) }}">
+        {% for question in questionnaire.content.questions %}
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">{{ question.id }}. {{ question.question }}</h5>
+                </div>
+                <div class="card-body">
+                    {% if question.type == 'single_choice' %}
+                        <div class="options-list">
+                            {% for option in question.options %}
+                                <div class="form-check mb-2">
+                                    <input class="form-check-input"
+                                           type="radio"
+                                           name="question_{{ question.id }}"
+                                           id="q{{ question.id }}_{{ option.value }}"
+                                           value="{{ option.value }}"
+                                           required>
+                                    <label class="form-check-label" for="q{{ question.id }}_{{ option.value }}">
+                                        {{ option.text }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="form-check mb-4">
+            <input class="form-check-input" type="checkbox" name="is_shared" id="isShared">
+            <label class="form-check-label" for="isShared">
+                Share my results
+            </label>
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-5">
+            <a href="{{ url_for('questionnaire.list_page') }}" class="btn btn-secondary me-md-2">Back to List</a>
+            <button type="submit" class="btn btn-primary">Submit Questionnaire</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block title %}Questionnaire List - UniSupport{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Mental Health Assessment Questionnaires</h2>
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="card-title">Beck Depression Inventory (BDI-II)</h2>
+                    <p class="card-text">Assess your level of depressive symptoms to better understand your emotional health.</p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{{ url_for('questionnaire.take_questionnaire', questionnaire_type='beck_depression_inventory') }}"
+                       class="btn btn-primary">Start Assessment</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-body">
+                    <h2 class="card-title">Study Status Assessment Questionnaire</h2>
+                    <p class="card-text">Evaluate your current study status and efficiency to help improve your learning methods.</p>
+                </div>
+                <div class="card-footer bg-transparent">
+                    <a href="{{ url_for('questionnaire.take_questionnaire', questionnaire_type='study_status_assessment') }}"
+                       class="btn btn-primary">Start Assessment</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <div class="alert alert-info">
+            <h4 class="alert-heading">Important Note</h4>
+            <p>These questionnaires are for self-assessment only and do not constitute a medical diagnosis. Please consult a healthcare or mental health professional if needed.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Removed old questionnaire loading script
+</script>
+{% endblock %}
