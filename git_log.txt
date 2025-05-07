@@ -1,0 +1,419 @@
+
+=== Commit: 3025bd4 ===
+Author: Kristoper-sw
+Date: 2025-05-07
+Message: update README.md
+  • Contribution.png (+- / --)
+  • README.md (+1 / -7)
+
+=== Commit: b17b14e ===
+Author: Kristoper-sw
+Date: 2025-05-06
+Message: update README.md
+  • README.md (+10 / -0)
+
+=== Commit: e59ff8f ===
+Author: Kristoper-sw
+Date: 2025-05-06
+Message: update environment
+  • README.md (+1 / -1)
+  • requirements.txt (+- / --)
+
+=== Commit: c098f74 ===
+Author: é™ˆä»»æ³½
+Date: 2025-05-06
+Message:  init database
+  • UniSupport.db (+- / --)
+  • app/__pycache__/__init__.cpython-312.pyc (+- / --)
+  • app/controllers/__pycache__/__init__.cpython-312.pyc (+- / --)
+  • app/controllers/__pycache__/questionnaire_controller.cpython-312.pyc (+- / --)
+  • app/controllers/__pycache__/resource_controller.cpython-312.pyc (+- / --)
+  • app/controllers/__pycache__/task_controller.cpython-312.pyc (+- / --)
+  • app/controllers/__pycache__/user_controller.cpython-312.pyc (+- / --)
+  • core/__pycache__/login.cpython-312.pyc (+- / --)
+  • core/__pycache__/questionnaire.cpython-312.pyc (+- / --)
+  • core/__pycache__/resource.cpython-312.pyc (+- / --)
+  • core/__pycache__/resource_recommender.cpython-312.pyc (+- / --)
+  • core/__pycache__/task.cpython-312.pyc (+- / --)
+  • data/__pycache__/questionnaire_data.cpython-312.pyc (+- / --)
+  • data/__pycache__/resource_data.cpython-312.pyc (+- / --)
+  • data/__pycache__/task_data.cpython-312.pyc (+- / --)
+  • data/__pycache__/user_data.cpython-312.pyc (+- / --)
+  • model/__pycache__/__init__.cpython-312.pyc (+- / --)
+  • model/__pycache__/db_base.cpython-312.pyc (+- / --)
+  • model/__pycache__/questionnaire.cpython-312.pyc (+- / --)
+  • model/__pycache__/relationships.cpython-312.pyc (+- / --)
+  • model/__pycache__/resource.cpython-312.pyc (+- / --)
+  • model/__pycache__/task.cpython-312.pyc (+- / --)
+  • model/__pycache__/user.cpython-312.pyc (+- / --)
+  • repo/__pycache__/questionnaireRepo.cpython-312.pyc (+- / --)
+  • repo/__pycache__/resourceRepo.cpython-312.pyc (+- / --)
+  • repo/__pycache__/taskRepo.cpython-312.pyc (+- / --)
+  • repo/__pycache__/userRepo.cpython-312.pyc (+- / --)
+
+=== Commit: 48c7fe4 ===
+Author: Kristoper-sw
+Date: 2025-05-06
+Message: add data
+  • data/questionnaire_data.py (+562 / -0)
+  • data/resource_data.py (+188 / -0)
+  • data/task_data.py (+111 / -0)
+  • data/user_data.py (+30 / -0)
+
+=== Commit: 1e1dffb ===
+Author: barry
+Date: 2025-05-06
+Message: some file for core part.
+  • core/login.py (+105 / -3)
+  • core/questionnaire.py (+342 / -6)
+  • core/resource.py (+63 / -3)
+  • core/resource_recommender.py (+162 / -0)
+  • core/task.py (+116 / -8)
+
+=== Commit: 3aa52ec ===
+Author: YaqingZhao
+Date: 2025-05-06
+Message: Merge remote-tracking branch 'origin/main'
+
+=== Commit: ae47f04 ===
+Author: Kristoper-sw
+Date: 2025-05-06
+Message: update requirements
+  • requirements.txt (+1 / -1)
+
+=== Commit: 0e3ed68 ===
+Author: YaqingZhao
+Date: 2025-05-06
+Message: Merge remote-tracking branch 'origin/main'
+
+=== Commit: 0d0a0dd ===
+Author: YaqingZhao
+Date: 2025-05-06
+Message: Update file name
+  • app/{controller => controllers}/__init__.py (+0 / -0)
+  • app/{controller => controllers}/questionnaire_controller.py (+0 / -0)
+  • app/{controller => controllers}/resource_controller.py (+0 / -0)
+  • app/{controller => controllers}/task_controller.py (+0 / -0)
+  • app/{controller => controllers}/user_controller.py (+0 / -0)
+
+=== Commit: d846e87 ===
+Author: YaqingZhao
+Date: 2025-05-06
+Message: Modify name
+  • app/controller/{_init_.py => __init__.py} (+0 / -0)
+
+=== Commit: 89b2114 ===
+Author: Kristoper-sw
+Date: 2025-05-06
+Message: add readme and requirements
+  • .idea/BUS.iml (+1 / -1)
+  • .idea/misc.xml (+1 / -1)
+  • app/__init__.py (+93 / -0)
+
+=== Commit: 73dc88b ===
+Author: Kristoper-sw
+Date: 2025-05-06
+Message: add readme and requirements
+  • README.md (+143 / -2)
+  • requirements.txt (+19 / -0)
+  • run.py (+6 / -0)
+
+=== Commit: 1dcb567 ===
+Author: Kristoper-sw
+Date: 2025-05-06
+Message: add frontend code
+  • app/templates/base.html (+124 / -0)
+  • app/templates/index.html (+12 / -12)
+  • app/templates/questionnaire/detail.html (+127 / -0)
+  • app/templates/questionnaire/form_new.html (+71 / -0)
+  • app/templates/questionnaire/history.html (+240 / -0)
+  • app/templates/questionnaire/list.html (+49 / -0)
+  • app/templates/questionnaire/list_new.html (+47 / -0)
+  • app/templates/questionnaire/result.html (+40 / -0)
+  • app/templates/questionnaire/shared.html (+178 / -0)
+  • app/templates/resource/index.html (+392 / -0)
+  • app/templates/task/index.html (+499 / -0)
+  • app/templates/user/login.html (+66 / -0)
+  • app/templates/user/profile.html (+35 / -0)
+
+=== Commit: 8db8588 ===
+Author: é™ˆä»»æ³½
+Date: 2025-05-05
+Message: modify and add comments
+  • model/__init__.py (+2 / -2)
+  • model/db_base.py (+8 / -7)
+  • model/init_db.py (+31 / -34)
+  • model/questionnaire.py (+10 / -9)
+  • model/relationships.py (+7 / -3)
+  • model/resource.py (+36 / -33)
+  • model/task.py (+21 / -21)
+  • model/user.py (+7 / -6)
+
+=== Commit: 6edfc79 ===
+Author: YaqingZhao
+Date: 2025-05-05
+Message: Refactor and enhance all controller modules
+  • app/controller/_init_.py (+1 / -0)
+  • app/controller/questionnaire_controller.py (+42 / -71)
+  • app/controller/resource_controller.py (+15 / -17)
+  • app/controller/task_controller.py (+42 / -44)
+  • app/controller/user_controller.py (+19 / -24)
+
+=== Commit: 144bf01 ===
+Author: yangshiwei
+Date: 2025-05-04
+Message: modify repo files
+  • repo/questionnaireRepo.py (+52 / -37)
+  • repo/resourceRepo.py (+30 / -23)
+  • repo/taskRepo.py (+9 / -10)
+  • repo/userRepo.py (+34 / -14)
+
+=== Commit: ca0b42e ===
+Author: yangshiwei
+Date: 2025-05-04
+Message: create tests files
+  • tests/__init__.py (+1 / -0)
+  • tests/login_test.py (+0 / -0)
+  • tests/run_tests.py (+17 / -0)
+  • tests/test_api_integration.py (+45 / -0)
+  • tests/test_login.py (+63 / -0)
+  • tests/test_questionnaire.py (+90 / -0)
+  • tests/test_resource.py (+84 / -0)
+  • tests/test_resource_recommender.py (+94 / -0)
+  • tests/test_task.py (+130 / -0)
+
+=== Commit: 7dea75b ===
+Author: YaqingZhao
+Date: 2025-05-04
+Message: Added login redirect for unauthenticated users.
+  • app/controller/task_controller.py (+13 / -2)
+
+=== Commit: cd112f5 ===
+Author: YaqingZhao
+Date: 2025-05-04
+Message: Enhance questionnaire and resource controllers with advanced features
+  • app/controller/questionnaire_controller.py (+314 / -105)
+  • app/controller/resource_controller.py (+87 / -13)
+  • app/controller/user_controller.py (+24 / -22)
+
+=== Commit: 3452d37 ===
+Author: yangshiwei
+Date: 2025-05-03
+Message: create function in userRepo.py
+  • repo/userRepo.py (+69 / -0)
+
+=== Commit: fe6ead1 ===
+Author: yangshiwei
+Date: 2025-05-02
+Message: create function in taskRepo.py
+  • repo/taskRepo.py (+55 / -0)
+
+=== Commit: 2102694 ===
+Author: yangshiwei
+Date: 2025-05-02
+Message: create function in resourceRepo.py
+  • repo/resourceRepo.py (+39 / -2)
+
+=== Commit: 81ada72 ===
+Author: é™ˆä»»æ³½
+Date: 2025-05-02
+Message: add questionnaire model
+  • model/questionnaire.py (+34 / -0)
+
+=== Commit: d2c6602 ===
+Author: é™ˆä»»æ³½
+Date: 2025-05-02
+Message: add user model
+  • model/user.py (+28 / -0)
+
+=== Commit: f838995 ===
+Author: é™ˆä»»æ³½
+Date: 2025-04-30
+Message: database init
+  • model/init_db.py (+175 / -0)
+
+=== Commit: 11128df ===
+Author: é™ˆä»»æ³½
+Date: 2025-04-30
+Message: update task model
+  • model/task.py (+72 / -0)
+
+=== Commit: 29d41d2 ===
+Author: é™ˆä»»æ³½
+Date: 2025-04-30
+Message: add relationships and resource
+  • model/relationships.py (+11 / -0)
+  • model/resource.py (+78 / -0)
+
+=== Commit: f256235 ===
+Author: yangshiwei
+Date: 2025-04-30
+Message: create function in resourceRepo.py
+  • repo/resourceRepo.py (+12 / -0)
+
+=== Commit: 76761fa ===
+Author: YaqingZhao
+Date: 2025-04-30
+Message: Add _init_.py
+  • app/controller/_init_.py (+0 / -0)
+
+=== Commit: 29d4480 ===
+Author: yangshiwei
+Date: 2025-04-28
+Message: create function in resourceRepo.py
+  • repo/resourceRepo.py (+19 / -0)
+
+=== Commit: 4d4eb66 ===
+Author: YaqingZhao
+Date: 2025-04-28
+Message: Add resource_controller.py and task_controller.py to manage academic resources and task-related operations, including CRUD functionalities and JWT-based access control.
+  • app/controller/resource_controller.py (+101 / -0)
+  • app/controller/task_controller.py (+154 / -0)
+
+=== Commit: eda7b53 ===
+Author: yangshiwei
+Date: 2025-04-26
+Message: create function in questionnaireRepo.py
+  • repo/questionnaireRepo.py (+19 / -0)
+
+=== Commit: 345b6f5 ===
+Author: barry
+Date: 2025-04-26
+Message: add function file for core file
+  • core/login.py (+13 / -3)
+  • core/questionnaire.py (+26 / -0)
+  • core/resource.py (+13 / -0)
+  • core/task.py (+26 / -0)
+
+=== Commit: b03beb3 ===
+Author: YaqingZhao
+Date: 2025-04-26
+Message: The questionnaire_controller.py module manages all questionnaire-related operations in the Flask application. It handles rendering questionnaire pages, providing APIs for submitting and deleting questionnaires, and showing questionnaire histories. It uses a Flask Blueprint for modular design and applies JWT authentication to protect routes. The controller enforces role-based access, ensuring administrators and regular users access appropriate content. Business logic is delegated to a service layer, while database interactions are handled through repositories, promoting clean separation of concerns and easy maintainability.
+  • app/controller/questionnaire_controller.py (+119 / -0)
+
+=== Commit: bda123a ===
+Author: yangshiwei
+Date: 2025-04-25
+Message: create function in questionnaireRepo.py
+  • repo/questionnaireRepo.py (+22 / -1)
+
+=== Commit: 6cdbea2 ===
+Author: YaqingZhao
+Date: 2025-04-26
+Message: The user_controller.py module is responsible for managing user authentication and session control within the application. It facilitates user login and logout processes, ensures secure access to personal data through JWT-based authentication, and provides endpoints for rendering login and profile pages. By employing secure cookies to store authentication tokens, it supports persistent sessions while maintaining user privacy. This controller plays a central role in enforcing access control and ensuring a smooth user experience within the broader system architecture.
+  • app/controller/user_controller.py (+117 / -0)
+
+=== Commit: d8ce4fc ===
+Author: yangshiwei
+Date: 2025-04-24
+Message: create function in questionnaireRepo.py
+  • repo/questionnaireRepo.py (+19 / -0)
+
+=== Commit: 51386e9 ===
+Author: é™ˆä»»æ³½
+Date: 2025-04-24
+Message: init model package
+  • .idea/BusFinalProject.iml (+11 / -0)
+  • .idea/misc.xml (+4 / -1)
+  • model/__init__.py (+9 / -0)
+  • model/db_base.py (+22 / -0)
+
+=== Commit: 7c55618 ===
+Author: yangshiwei
+Date: 2025-04-23
+Message: creat taskRepo.py and userRepo.py file
+  • repo/taskRepo.py (+0 / -0)
+  • repo/userRepo.py (+0 / -0)
+
+=== Commit: 6061c16 ===
+Author: Kristoper-sw
+Date: 2025-04-22
+Message: Merge remote-tracking branch 'origin/main'
+
+=== Commit: 1d857a1 ===
+Author: Kristoper-sw
+Date: 2025-04-22
+Message: add .idea
+  • .idea/.gitignore (+3 / -0)
+  • .idea/BUS.iml (+8 / -0)
+  • .idea/inspectionProfiles/Project_Default.xml (+23 / -0)
+  • .idea/inspectionProfiles/profiles_settings.xml (+6 / -0)
+  • .idea/misc.xml (+4 / -0)
+  • .idea/modules.xml (+8 / -0)
+  • .idea/vcs.xml (+6 / -0)
+
+=== Commit: cd44f3c ===
+Author: yangshiwei
+Date: 2025-04-22
+Message: creat resourceRepo.py file
+  • repo/resourceRepo.py (+0 / -0)
+
+=== Commit: 199b06e ===
+Author: yangshiwei
+Date: 2025-04-22
+Message: Merge remote-tracking branch 'origin/main'
+
+=== Commit: 9877125 ===
+Author: ShouyangWang
+Date: 2025-04-22
+Message: Delete .idea directory
+  • .idea/.gitignore (+0 / -3)
+  • .idea/BUS.iml (+0 / -8)
+  • .idea/inspectionProfiles/Project_Default.xml (+0 / -23)
+  • .idea/inspectionProfiles/profiles_settings.xml (+0 / -6)
+  • .idea/misc.xml (+0 / -4)
+  • .idea/modules.xml (+0 / -8)
+  • .idea/vcs.xml (+0 / -6)
+
+=== Commit: a0e8139 ===
+Author: yangshiwei
+Date: 2025-04-22
+Message: creat login_test.py file
+  • tests/login_test.py (+0 / -0)
+
+=== Commit: ba4aecf ===
+Author: barry
+Date: 2025-04-22
+Message: add function file for login.py
+  • core/login.py (+7 / -0)
+
+=== Commit: 4aac5d3 ===
+Author: barry
+Date: 2025-04-22
+Message: add py file for core
+  • core/login.py (+0 / -0)
+  • core/questionnaire.py (+0 / -0)
+  • core/resource.py (+0 / -0)
+  • core/task.py (+0 / -0)
+
+=== Commit: 7a5dc45 ===
+Author: yangshiwei
+Date: 2025-04-22
+Message: Merge remote-tracking branch 'origin/main'
+
+=== Commit: a0115f2 ===
+Author: yangshiwei
+Date: 2025-04-22
+Message: raw scheme of repo
+  • .idea/.gitignore (+3 / -0)
+  • .idea/misc.xml (+4 / -0)
+  • repo/questionnaireRepo.py (+2 / -0)
+
+=== Commit: 7319b71 ===
+Author: Kristoper-sw
+Date: 2025-04-22
+Message: add home page
+  • .idea/.gitignore (+8 / -0)
+  • .idea/BUS.iml (+8 / -0)
+  • .idea/inspectionProfiles/Project_Default.xml (+23 / -0)
+  • .idea/inspectionProfiles/profiles_settings.xml (+6 / -0)
+  • .idea/misc.xml (+4 / -0)
+  • .idea/modules.xml (+8 / -0)
+  • .idea/vcs.xml (+6 / -0)
+  • app/templates/index.html (+57 / -0)
+
+=== Commit: edfd67c ===
+Author: ChenRzz
+Date: 2025-04-22
+Message: Initial commit
+  • README.md (+2 / -0)
